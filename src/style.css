@@ -1,0 +1,57 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#video-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#video-container video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+main {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 100dvh;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    30deg,
+    #f9d751, /* Yellow */
+    #febc51, /* Light Orange */
+    #fea256, /* Orange */
+    #f88b5e, /* Coral */
+    #ee7666, /* Salmon */
+    #e1636d, /* Pink-Red */
+    #d15473, /* Deep Pink */
+    #bf4878, /* Rose */
+    #ab3e7a, /* Magenta */
+    #97377a, /* Purple */
+    #813177, /* Deep Purple */
+    #6c2d72  /* Dark Purple */
+  );
+  display: grid;
+  place-items: center;
+  color: white;
+  mix-blend-mode: overlay;
+  z-index: 1;
+  text-align: center;
+  height: 100%;
+  font-size: 10vw;
+  line-height: 1.2;
+}
