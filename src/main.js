@@ -1,40 +1,56 @@
 import './style.css'
 
-const VIDEO_BREAKPOINTS = {
-  mobile: {
+const VIDEO_BREAKPOINTS = [
+  {
     maxWidth: 768,
     source: 'test-small.mp4'
   },
-  tablet: {
+  {
     maxWidth: 1024,
     source: 'test-small.mp4'
   },
-  desktop: {
-    maxWidth: Infinity,
+  {
+    maxWidth: Number.MAX_SAFE_INTEGER,
     source: 'test.webm'
   }
-}
+].sort((a, b) => a.maxWidth - b.maxWidth);
 
 function getVideoSource(screenWidth) {
-  return Object.values(VIDEO_BREAKPOINTS)
-    .find(breakpoint => screenWidth <= breakpoint.maxWidth)
-    ?.source || VIDEO_BREAKPOINTS.desktop.source
+  for (let i = 0; i < VIDEO_BREAKPOINTS.length; i++) {
+    if (screenWidth <= VIDEO_BREAKPOINTS[i].maxWidth) {
+      return VIDEO_BREAKPOINTS[i].source;
+    }
+  }
+  return VIDEO_BREAKPOINTS[VIDEO_BREAKPOINTS.length - 1].source;
 }
 
-const container = document.getElementById('video-container')
-const videoSource = getVideoSource(window.innerWidth)
-const videoHTML = `<video autoplay muted loop playsinline src="${videoSource}"></video>`
-container.innerHTML = videoHTML
+const container = document.getElementById('video-container');
+if (!container) {
+  console.error('Video container not found');
+  throw new Error('Required DOM element missing');
+}
 
+const video = document.createElement('video');
+video.autoplay = true;
+video.muted = true;
+video.loop = true;
+video.playsInline = true;
+video.src = getVideoSource(window.innerWidth);
+container.appendChild(video);
+
+let resizeTimeout = null;
 window.addEventListener('resize', () => {
-  const videoElement = container.querySelector('video')
-  if (!videoElement) return
+  if (resizeTimeout) {
+    window.cancelAnimationFrame(resizeTimeout);
+  }
   
-  const newSource = getVideoSource(window.innerWidth)
-  if (videoElement.src === newSource) return
-  
-  videoElement.src = newSource
-  videoElement.load()
-})
+  resizeTimeout = window.requestAnimationFrame(() => {
+    const newSource = getVideoSource(window.innerWidth);
+    if (video.src.includes(newSource)) return;
+    
+    video.src = newSource;
+    video.load();
+  });
+});
 
 
