@@ -15,26 +15,13 @@ const VIDEO_BREAKPOINTS = [
   }
 ].sort((a, b) => a.maxWidth - b.maxWidth);
 
-let lastWidth = window.innerWidth;
-let currentSource = null;
-
 function getVideoSource(screenWidth) {
-  if (currentSource && 
-      (screenWidth <= lastWidth ? 
-        screenWidth > VIDEO_BREAKPOINTS[VIDEO_BREAKPOINTS.length - 2]?.maxWidth :
-        screenWidth <= VIDEO_BREAKPOINTS[0].maxWidth)) {
-    return currentSource;
-  }
-  
-  lastWidth = screenWidth;
-  for (const breakpoint of VIDEO_BREAKPOINTS) {
-    if (screenWidth <= breakpoint.maxWidth) {
-      currentSource = breakpoint.source;
-      return currentSource;
+  for (let i = 0; i < VIDEO_BREAKPOINTS.length; i++) {
+    if (screenWidth <= VIDEO_BREAKPOINTS[i].maxWidth) {
+      return VIDEO_BREAKPOINTS[i].source;
     }
   }
-  currentSource = VIDEO_BREAKPOINTS[VIDEO_BREAKPOINTS.length - 1].source;
-  return currentSource;
+  return VIDEO_BREAKPOINTS[VIDEO_BREAKPOINTS.length - 1].source;
 }
 
 const container = document.getElementById('video-container');
@@ -58,13 +45,11 @@ window.addEventListener('resize', () => {
   }
   
   resizeTimeout = window.requestAnimationFrame(() => {
-    const width = window.innerWidth;
-    const newSource = getVideoSource(width);
-    if (currentSource === newSource) return;
+    const newSource = getVideoSource(window.innerWidth);
+    if (video.src.includes(newSource)) return;
     
     video.src = newSource;
     video.load();
   });
 });
-
 
